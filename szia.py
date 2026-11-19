@@ -18,7 +18,7 @@ with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     info = ydl.extract_info(YOUTUBE_URL, download=False)
     stream_url = info["url"]
 
-model = YOLO("yolo26s.pt")
+model = YOLO("yolo26l.pt")
 
 cap = cv2.VideoCapture(stream_url)
 
@@ -28,20 +28,19 @@ if not cap.isOpened():
 
 print("A stream elindult.")
 
-# --- KÉT STATIKUS SZÁMLÁLÓ VONAL (koordináták pixelben: (x, y)) ---
 LINES = [
     {
         "name": "1. vonal (Zebra)",
         "start": (1230, 390),
         "end": (1200, 450),
-        "color": (0, 255, 255),  # Sárga (BGR)
+        "color": (0, 255, 255),
         "counted_ids": set()
     },
     {
         "name": "2. vonal (Jarda)",
         "start": (1150, 650),
         "end": (1600, 650),
-        "color": (255, 255, 0),  # Ciánkék (BGR)
+        "color": (255, 255, 0),
         "counted_ids": set()
     }
 ]
@@ -76,7 +75,6 @@ while True:
 
     annotated_frame = results[0].plot()
 
-    # Két statikus vonal kirajzolása
     for line in LINES:
         cv2.line(annotated_frame, line["start"], line["end"], line["color"], 3)
 
@@ -86,11 +84,11 @@ while True:
         classes = results[0].boxes.cls.int().cpu().tolist()
 
         for box, track_id, cls in zip(boxes, track_ids, classes):
-            if cls != 0:  # Csak a gyalogosokat (class 0) számoljuk
+            if cls != 0:
                 continue
 
             x1, y1, x2, y2 = box
-            curr_pos = (int((x1 + x2) / 2), int(y2))  # Talppont (alsó középpont)
+            curr_pos = (int((x1 + x2) / 2), int(y2))  # Talppont
 
             if track_id in track_history:
                 prev_pos = track_history[track_id]
@@ -100,7 +98,6 @@ while True:
 
             track_history[track_id] = curr_pos
 
-            # Talppont kirajzolása
             is_counted = any(track_id in line["counted_ids"] for line in LINES)
             dot_color = (0, 255, 0) if is_counted else (0, 0, 255)
             cv2.circle(annotated_frame, curr_pos, 4, dot_color, -1)
