@@ -51,7 +51,6 @@ def ccw(A, B, C):
 
 def intersect(A, B, C, D):
     return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)
-# ------------------------------------------------------------------
 
 while True:
     ret, frame = cap.read()
