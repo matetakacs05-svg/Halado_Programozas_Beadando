@@ -5,9 +5,10 @@ new_track_thresh: 0.25
 track_buffer: 150
 match_thresh: 0.8
 fuse_score: True
+
 gmc_method: None
 
 with_reid: True
+proximity_thresh: 0.1
 model: auto
-proximity_thresh: 0.5
 appearance_thresh: 0.30

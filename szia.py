@@ -14,11 +14,10 @@ ydl_opts = {
     "remote_components": ["ejs:npm"]
 }
 
-with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-    info = ydl.extract_info(YOUTUBE_URL, download=False)
-    stream_url = info["url"]
-
 model = YOLO("yolo26l.pt")
+
+with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    stream_url = ydl.extract_info(YOUTUBE_URL, download=False)["url"]
 
 cap = cv2.VideoCapture(stream_url)
 
@@ -31,7 +30,7 @@ print("A stream elindult.")
 LINES = [
     {
         "name": "1. vonal (Zebra)",
-        "start": (1230, 390),
+        "start": (1230, 385),
         "end": (1200, 450),
         "color": (0, 255, 255),
         "counted_ids": set()
@@ -45,7 +44,7 @@ LINES = [
     }
 ]
 
-track_history = {}  # track_id -> előző (x, y) talppont
+track_history = {}
 
 def ccw(A, B, C):
     return (C[1] - A[1]) * (B[0] - A[0]) > (B[1] - A[1]) * (C[0] - A[0])
@@ -102,7 +101,6 @@ while True:
             dot_color = (0, 255, 0) if is_counted else (0, 0, 255)
             cv2.circle(annotated_frame, curr_pos, 4, dot_color, -1)
 
-    # Számlálók kiírása a bal felső sarokba
     for i, line in enumerate(LINES):
         cv2.putText(
             annotated_frame,
